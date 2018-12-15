@@ -1,0 +1,49 @@
+#Fred Data
+
+
+import quandl
+import matplotlib.pyplot as plt
+from scipy import stats
+
+
+mydata = quandl.get("FRED/UNRATE", start_date="2001-12-31", end_date="2005-12-31", collapse="quarterly")
+mydata2 = quandl.get("FRED/GDP", start_date="2001-12-31", end_date="2005-12-31", collapse="quarterly")
+print(mydata)
+print(mydata2)
+
+print(mydata.describe())
+print(mydata2.describe())
+
+
+
+import pandas as pd
+import statsmodels.formula.api as sm
+from sklearn import linear_model
+
+df = pd.DataFrame({"A": [10,20,30,40,50,60,70,80,90,100, 110,120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250], "B": [20, 30, 10, 40, 50, 60,90, 40, 30, 40, 56, 20, 45, 60 ,67, 100, 34, 56, 20, 50, 90, 98, 980, 340, 56], "C": [32, 45, 45, 234, 23, 23, 42, 54, 500, 670, 450, 567, 786, 874, 550, 123, 456, 678, 980, 1000, 120, 130, 140, 150 ,160]})
+result = sm.ols(formula="A ~ B + C", data=df).fit()
+print(result.summary())
+
+reg = linear_model.LinearRegression()
+print(reg.fit(df[['B', 'C']], df['A']))
+
+import pandas_datareader.data as web
+import datetime
+
+start = datetime.datetime(2010, 3, 31)
+end = datetime.datetime(2013, 3, 31)
+gdp = web.DataReader(['unrate', 'CPIAUCSL'], 'fred', start, end)
+print(gdp)
+
+
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+
+x = web.DataReader(['unrate'], 'fred', start, end)
+y = web.DataReader(['CPIAUCSL'], 'fred', start, end)
+x2 = sm.add_constant(gdp)
+model = smf.OLS(x,y).fit()
+predictions = model.predict(x)
+print(predictions)
+print(model.summary())
