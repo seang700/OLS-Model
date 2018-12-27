@@ -1,0 +1,31 @@
+
+import pandas_datareader.data as web
+import datetime
+
+start = datetime.datetime(2010, 3, 31)
+end = datetime.datetime(2013, 3, 31)
+series = web.DataReader(['unrate', 'CPIAUCSL'], 'fred', start, end)
+print(series)
+
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+import numpy as np
+
+Y = web.DataReader(['unrate'], 'fred', start, end)
+X = web.DataReader(['CPIAUCSL'], 'fred', start, end)
+X2 = sm.add_constant(Y)
+model = smf.OLS(X,X2).fit()
+predictions = model.predict(X2)
+
+print(predictions)
+print(model.summary())
+
+
+plt.plot(predictions)
+plt.plot(X)OO
+plt.xlabel('x Value')
+plt.ylabel('predictions Value')
+#plt.legend()
+plt.show()
+
