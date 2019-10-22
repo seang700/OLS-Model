@@ -1,0 +1,41 @@
+import statsmodels.api as sm
+#import numpy as np
+import pandas as pd
+
+raw_data =  pd.read_csv('C:/Users/J042666/Desktop/Fama-French Model_v4.csv')
+print(raw_data)
+
+class famafrench(object):
+
+    def __init__(self, y=raw_data, start= "1/30/1993",end= "8/24/2019"):
+        self.start = start        
+        self.end = end        
+        self.y = raw_data    
+        self.filtered_y = raw_data[pd.to_datetime(raw_data["Date"]).isin(pd.date_range(start, end))]
+        print(self.filtered_y)
+        
+    #def __str__(self):
+        #return 'from %s to %s' %(self.start, self.end)        
+    
+    def variables(self):
+        X = self.filtered_y[["mkt", "SMB","HML"]] # how you select coloumns from a csv file. will return the vairbales in the order you give it
+        Y = self.filtered_y["Mkt-RF"]
+        return Y,X
+    
+    def regression(self):
+        Y,X = self.variables()
+        X = sm.add_constant(X)
+        #model = sm.OLS(Y,X).fit()
+        model = sm.OLS(Y.astype(float), X.astype(float)).fit()
+        print(model.summary())
+        return model
+        
+    def predict(self, predict_y):
+        self.regression()
+        model = sm.OLS(Y.astype(float), X.astype(float)).fit()
+        predicted_results = model.predict(predict_y)
+        print(predicted_results)
+
+my_model = famafrench(y = raw_data, start = "1/30/1993", end= "8/24/2019")
+my_model.regression()
+my_model.predict(X)
